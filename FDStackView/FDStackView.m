@@ -85,6 +85,14 @@
     }
 }
 
+- (void)layoutMarginsDidChange {
+    [super layoutMarginsDidChange];
+    if (self.layoutMarginsRelativeArrangement) {
+        self.distributionArrangement.layoutMargin = self.layoutMargins;
+        [self updateLayoutArrangements];
+    }
+}
+
 #pragma mark - Public Arranged Subviews Operations
 
 - (NSArray<UIView *> *)arrangedSubviews {
@@ -160,6 +168,18 @@
     if (_spacing != spacing) {
         _spacing = spacing;
         self.distributionArrangement.spacing = spacing;
+        [self updateLayoutArrangements];
+    }
+}
+
+- (void)setLayoutMarginsRelativeArrangement:(BOOL)layoutMarginsRelativeArrangement {
+    if (_layoutMarginsRelativeArrangement != layoutMarginsRelativeArrangement) {
+        _layoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement;
+        if (layoutMarginsRelativeArrangement) {
+            self.distributionArrangement.layoutMargin = self.layoutMargins;
+        } else {
+            self.distributionArrangement.layoutMargin = UIEdgeInsetsZero;
+        }
         [self updateLayoutArrangements];
     }
 }

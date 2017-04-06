@@ -190,13 +190,13 @@
     
     NSMutableArray *canvasConnectionConstraints = [NSMutableArray new];
     NSLayoutAttribute minAttribute = [self minAttributeForCanvasConnections];
-    NSLayoutConstraint *head = [NSLayoutConstraint constraintWithItem:self.canvas attribute:minAttribute relatedBy:NSLayoutRelationEqual toItem:self.items.firstObject attribute:minAttribute multiplier:1 constant:0];
+    NSLayoutConstraint *head = [NSLayoutConstraint constraintWithItem:self.canvas attribute:minAttribute relatedBy:NSLayoutRelationEqual toItem:self.items.firstObject attribute:minAttribute multiplier:1 constant:(self.axis == UILayoutConstraintAxisHorizontal ? self.layoutMargin.left : self.layoutMargin.top)];
     [canvasConnectionConstraints addObject:head];
     head.identifier = @"FDSV-canvas-connection";
     
-    NSLayoutConstraint *end = [NSLayoutConstraint constraintWithItem:self.canvas attribute:minAttribute+1 relatedBy:NSLayoutRelationEqual toItem:self.items.lastObject attribute:minAttribute+1 multiplier:1 constant:0];
+    NSLayoutConstraint *end = [NSLayoutConstraint constraintWithItem:self.canvas attribute:minAttribute+1 relatedBy:NSLayoutRelationEqual toItem:self.items.lastObject attribute:minAttribute+1 multiplier:1 constant:(self.axis == UILayoutConstraintAxisHorizontal ? self.layoutMargin.right : self.layoutMargin.bottom)];
     [canvasConnectionConstraints addObject:end];
-    head.identifier = @"FDSV-canvas-connection";
+    end.identifier = @"FDSV-canvas-connection";
 
     self.canvasConnectionConstraints = canvasConnectionConstraints;
     [self.canvas addConstraints:canvasConnectionConstraints];

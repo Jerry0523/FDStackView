@@ -26,5 +26,6 @@
 @interface FDStackViewDistributionLayoutArrangement : FDStackViewLayoutArrangement
 @property (nonatomic, assign) CGFloat spacing;
 @property (nonatomic, assign) UIStackViewDistribution distribution;
+@property (nonatomic, assign) UIEdgeInsets layoutMargin;
 - (void)resetAllConstraints;
 @end
