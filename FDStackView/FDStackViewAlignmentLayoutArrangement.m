@@ -295,7 +295,14 @@
     
     [canvasAttributes enumerateObjectsUsingBlock:^(NSNumber *canvasAttribute, NSUInteger idx, BOOL *stop) {
         NSLayoutAttribute attribute = canvasAttribute.integerValue;
-        NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:[self viewOrGuideForLocationAttribute:attribute] attribute:attribute relatedBy:[self layoutRelationForCanvasConnectionForAttribute:attribute] toItem:self.canvas attribute:attribute multiplier:1 constant:0];
+        CGFloat attributeConstant = 0;
+        if (attribute == self.minAttributeForCanvasConnections) {
+            attributeConstant = (self.axis == UILayoutConstraintAxisHorizontal ? self.layoutMargin.top : self.layoutMargin.left);
+        } else if(attribute == self.maxAttributeForCanvasConnections){
+            attributeConstant = -(self.axis == UILayoutConstraintAxisHorizontal ? self.layoutMargin.bottom : self.layoutMargin.right);
+        }
+        
+        NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:[self viewOrGuideForLocationAttribute:attribute] attribute:attribute relatedBy:[self layoutRelationForCanvasConnectionForAttribute:attribute] toItem:self.canvas attribute:attribute multiplier:1 constant:attributeConstant];
         constraint.identifier = @"FDSV-canvas-connection";
         [self.canvas addConstraint:constraint];
         [self.canvasConnectionConstraints addObject:constraint];
