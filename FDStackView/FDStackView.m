@@ -89,8 +89,33 @@
     [super layoutMarginsDidChange];
     if (self.layoutMarginsRelativeArrangement) {
         self.distributionArrangement.layoutMargin = self.layoutMargins;
+        self.alignmentArrangement.layoutMargin = self.layoutMargins;
         [self updateLayoutArrangements];
     }
+}
+
+- (CGSize)intrinsicContentSize {
+    CGFloat axialSize = 0;
+    CGFloat rAxialMaxSize = 0;
+    
+    for (UIView *subView in self.arrangedSubviews) {
+        CGSize size = [subView intrinsicContentSize];
+        if (self.axis == UILayoutConstraintAxisHorizontal) {
+            axialSize += size.width;
+            rAxialMaxSize = MAX(rAxialMaxSize, size.height);
+        } else {
+            axialSize += size.height;
+            rAxialMaxSize = MAX(rAxialMaxSize, size.width);
+        }
+        axialSize += self.spacing;
+    }
+    
+    CGSize resultsize = (self.axis == UILayoutConstraintAxisHorizontal ? CGSizeMake(axialSize, rAxialMaxSize) : CGSizeMake(rAxialMaxSize, axialSize));
+    if (self.layoutMarginsRelativeArrangement) {
+        resultsize.width += (self.layoutMargins.left + self.layoutMargins.right);
+        resultsize.height += (self.layoutMargins.top + self.layoutMargins.bottom);
+    }
+    return resultsize;
 }
 
 #pragma mark - Public Arranged Subviews Operations
@@ -176,8 +201,10 @@
     if (_layoutMarginsRelativeArrangement != layoutMarginsRelativeArrangement) {
         _layoutMarginsRelativeArrangement = layoutMarginsRelativeArrangement;
         if (layoutMarginsRelativeArrangement) {
+            self.alignmentArrangement.layoutMargin = self.layoutMargins;
             self.distributionArrangement.layoutMargin = self.layoutMargins;
         } else {
+            self.distributionArrangement.layoutMargin = UIEdgeInsetsZero;
             self.distributionArrangement.layoutMargin = UIEdgeInsetsZero;
         }
         [self updateLayoutArrangements];
@@ -208,6 +235,7 @@
     [self.alignmentArrangement removeDeprecatedConstraints];
     [self.distributionArrangement updateArrangementConstraints];
     [self.alignmentArrangement updateArrangementConstraints];
+    [self invalidateIntrinsicContentSize];
 }
 
 - (void)updateConstraints {
